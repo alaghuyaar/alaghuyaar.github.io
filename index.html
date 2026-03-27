@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jordan Blake - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff006e;
+            --accent: #8b5cf6;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --gray: #1a1a1a;
+            --light-gray: #2a2a2a;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.15s ease;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 100vh;
+            background: var(--darker);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-right: 1px solid var(--gray);
+        }
+
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            margin: 1rem 0;
+            border-radius: 50%;
+            background: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .nav-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 70px;
+            background: var(--darker);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid var(--gray);
+        }
+
+        .nav-item:hover::after {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--text);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 80px;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: float-particle 8s infinite linear;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-subtitle {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: 4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 400px;
+        }
+
+        .hero-circle {
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: relative;
+            animation: rotate 20s linear infinite;
+        }
+
+        .hero-circle::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--secondary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--secondary);
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* About Section */
+        .about {
+            min-height: 100vh;
+            padding: 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-text p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tech-item {
+            background: var(--gray);
+            padding: 2rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .tech-item:hover {
+            background: var(--light-gray);
+            border-color: var(--primary);
+            transform: translateY(-10px);
+        }
+
+        .tech-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-name {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Projects Section */
+        .projects {
+            padding: 4rem;
+            min-height: 100vh;
+        }
+
+        .projects h2 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-showcase {
+            display: flex;
+            gap: 2rem;
+            height: 600px;
+        }
+
+        .project-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .project-item {
+            padding: 2rem;
+            background: var(--gray);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .project-item:hover,
+        .project-item.active {
+            background: var(--light-gray);
+            border-color: var(--primary);
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .project-category {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .project-preview {
+            flex: 1.5;
+            background: var(--gray);
+            border-radius: 20px;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border: 1px solid var(--light-gray);
+        }
+
+        .project-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-description {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            color: var(--secondary);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1.5rem;
+            background: var(--gray);
+            border: 1px solid var(--light-gray);
+            border-radius: 15px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .submit-btn {
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--text);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            justify-self: center;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .hero,
+            .about,
+            .projects,
+            .contact {
+                padding: 2rem;
+            }
+
+            .about {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .project-showcase {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursors -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="nav-item" data-tooltip="Home" onclick="scrollToSection('hero')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l10 9h-3v9h-6v-6h-2v6H5v-9H2l10-9z"/></svg>
+        </div>
+        <div class="nav-item" data-tooltip="About" onclick="scrollToSection('about')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </div>
+        <div class="nav-item" data-tooltip="Projects" onclick="scrollToSection('projects')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 6V4H2v2h20zm-10 4H2v2h10v-2zm8 0h-6v2h6v-2zM2 16h20v-2H2v2zm0 4h20v-2H2v2z"/></svg>
+        </div>
+        <div class="nav-item" data-tooltip="Contact" onclick="scrollToSection('contact')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="hero-content fade-in">
+                <div class="hero-subtitle">Creative Developer</div>
+                <h1 class="hero-title">Niraj Patel</h1>
+                <p class="hero-description">Crafting digital experiences that blend creativity with cutting-edge technology. I transform ideas into immersive web applications.</p>
+                <a href="#projects" class="hero-cta">
+                    View My Work
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-visual slide-in-right">
+                <div class="hero-circle"></div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="about-text slide-in-left">
+                <h2>About Me</h2>
+                <p>I'm a passionate developer with a keen eye for design and a love for creating seamless user experiences. My journey began with curiosity about how things work and evolved into a career of building digital solutions.</p>
+                <p>I specialize in full-stack development, focusing on modern web technologies and innovative design patterns. Every project is an opportunity to push boundaries and create something extraordinary.</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3+</span>
+                        <span class="stat-label">Years</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">25+</span>
+                        <span class="stat-label">Clients</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tech-grid slide-in-right">
+                <div class="tech-item">
+                    <div class="tech-icon">⚛️</div>
+                    <div class="tech-name">React</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🟢</div>
+                    <div class="tech-name">Node.js</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎨</div>
+                    <div class="tech-name">CSS3</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📱</div>
+                    <div class="tech-name">Mobile</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🚀</div>
+                    <div class="tech-name">Next.js</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">💾</div>
+                    <div class="tech-name">MongoDB</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="projects fade-in">
+            <h2>Featured Projects</h2>
+            <div class="project-showcase">
+                <div class="project-list">
+                    <div class="project-item active" onclick="showProject(0)">
+                        <div class="project-title">NeuroLink App</div>
+                        <div class="project-category">Mobile Application</div>
+                    </div>
+                    <div class="project-item" onclick="showProject(1)">
+                        <div class="project-title">CryptoTracker</div>
+                        <div class="project-category">Web Platform</div>
+                    </div>
+                    <div class="project-item" onclick="showProject(2)">
+                        <div class="project-title">ArtSpace</div>
+                        <div class="project-category">Creative Portfolio</div>
+                    </div>
+                    <div class="project-item" onclick="showProject(3)">
+                        <div class="project-title">DataViz Pro</div>
+                        <div class="project-category">Analytics Dashboard</div>
+                    </div>
+                </div>
+                <div class="project-preview">
+                    <div class="project-image" id="projectImage">🧠</div>
+                    <div class="project-description" id="projectDescription">
+                        A revolutionary mobile app that connects neural interfaces with everyday technology, enabling seamless brain-computer interaction.
+                    </div>
+                    <a href="#" class="project-link" id="projectLink">
+                        View Project
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact fade-in">
+            <div class="contact-container">
+                <h2>Let's Create Something Amazing</h2>
+                <p>Ready to bring your ideas to life? Let's collaborate and build something extraordinary together.</p>
+                <form class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Project Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="6" placeholder="Tell me about your project..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Project data
+        const projects = [
+            {
+                title: 'NeuroLink App',
+                category: 'Mobile Application',
+                image: '🧠',
+                description: 'A revolutionary mobile app that connects neural interfaces with everyday technology, enabling seamless brain-computer interaction.',
+                link: '#'
+            },
+            {
+                title: 'CryptoTracker',
+                category: 'Web Platform',
+                image: '₿',
+                description: 'Real-time cryptocurrency tracking platform with advanced analytics, portfolio management, and trading insights.',
+                link: '#'
+            },
+            {
+                title: 'ArtSpace',
+                category: 'Creative Portfolio',
+                image: '🎨',
+                description: 'An immersive digital gallery showcasing contemporary art with virtual reality integration and interactive experiences.',
+                link: '#'
+            },
+            {
+                title: 'DataViz Pro',
+                category: 'Analytics Dashboard',
+                image: '📊',
+                description: 'Professional data visualization tool that transforms complex datasets into beautiful, interactive charts and insights.',
+                link: '#'
+            }
+        ];
+
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = (e.clientX - 20) + 'px';
+                cursorFollower.style.top = (e.clientY - 20) + 'px';
+            }, 100);
+        });
+
+        // Animate background particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            document.getElementById('bgAnimation').appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+
+        setInterval(createParticle, 300);
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navigation
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Project showcase
+        function showProject(index) {
+            const project = projects[index];
+            document.getElementById('projectImage').textContent = project.image;
+            document.getElementById('projectDescription').textContent = project.description;
+            document.getElementById('projectLink').href = project.link;
+
+            // Update active project
+            document.querySelectorAll('.project-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.project-item')[index].classList.add('active');
+        }
+
+        // Form submission
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! I\'ll get back to you soon.');
+            this.reset();
+        });
+
+        // Hover effects for interactive elements
+        document.querySelectorAll('a, button, .project-item, .tech-item, .nav-item').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(2)';
+                cursor.style.backgroundColor = 'var(--secondary)';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                cursor.style.backgroundColor = 'var(--primary)';
+            });
+        });
+    </script>
+</body>
+</html>
